@@ -34,8 +34,9 @@ public class NeuralNetwork {
         return outputLayer.getValues();
     }
 
-    public void train(double[] expected) {
+    public void train(double[] inputs ,double[] expected) {
         //test the neural network
+        inputLayer.setValues(inputs);
         inputLayer.feedForward();
 
         //calculate the error
@@ -45,6 +46,10 @@ public class NeuralNetwork {
         outputLayer.setError(error);
 
         outputLayer.propagateBackwards();
+    }
+
+    public void applyTraining() {
+        outputLayer.applyChanges();
     }
 
     public double getLearningRate() {

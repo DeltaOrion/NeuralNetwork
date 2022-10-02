@@ -34,13 +34,9 @@ public class Layer {
 
     public void feedForward() {
         if (previousLayer != null) {
-            Matrix z = weights.multiply(previousLayer.activations).add(biases);
-            activations = z.clone();
-            for (int row = 0; row < activations.getRows(); row++) {
-                for (int col = 0; col < activations.getColumns(); col++) {
-                    activations.set(row, col, sigmoid(z.get(row, col)));
-                }
-            }
+            Matrix z = weights.multiply(previousLayer.activations)
+                    .add(biases);
+            activations = z.map(this::sigmoid);
         }
 
         if (nextLayer != null)
@@ -57,15 +53,11 @@ public class Layer {
         biases = new Matrix(getNeuronCount(), 1).randomize();
 
         weightNudges = new Matrix(weights.getRows(), weights.getColumns());
-        biases = new Matrix(biases.getRows(), biases.getColumns());
+        biasNudges = new Matrix(biases.getRows(), biases.getColumns());
     }
 
     private double sigmoid(double x) {
         return 1 / (1 + Math.pow(Math.E, -x));
-    }
-
-    private double dSigmoid(double x) {
-        return sigmoid(x) * (1 - sigmoid(x));
     }
 
     private double dSigmoidOut(double sigmoid) {
@@ -112,11 +104,13 @@ public class Layer {
         if (previousLayer == null)
             return;
 
-        if (nextLayer != null)
-            error = nextLayer.weights.transpose().multiply(nextLayer.error);
+        if (nextLayer != null) {
+            Matrix nextLayerTranspose = nextLayer.weights.transpose();
+            error = nextLayerTranspose.multiply(nextLayer.error);
+        }
 
-        Matrix dAdZ = activations.map(this::dSigmoidOut);
-        Matrix gradients = dAdZ.multiplyElementWise(error)
+        Matrix gradients = activations.map(this::dSigmoidOut);
+        gradients = gradients.multiplyElementWise(error)
                 .multiply(neuralNetwork.getLearningRate());
 
         //add to biases
@@ -132,11 +126,20 @@ public class Layer {
     }
 
     public void applyChanges() {
-        this.weights.add(weightNudges);
-        this.biases.add(biasNudges);
+        if(previousLayer==null)
+            return;
+
+        weightNudges.multiply(1.0/trainingCount);
+        biasNudges.multiply(1.0/trainingCount);
+
+        weights = this.weights.add(weightNudges);
+        biases = this.biases.add(biasNudges);
 
         weightNudges = new Matrix(weights.getRows(), weightNudges.getColumns());
         biases = new Matrix(biasNudges.getRows(), biases.getColumns());
+        trainingCount = 0;
+
+        previousLayer.applyChanges();
     }
 
 }
