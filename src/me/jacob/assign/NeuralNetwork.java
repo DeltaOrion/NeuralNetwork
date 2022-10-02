@@ -7,54 +7,55 @@ public class NeuralNetwork {
 
     private final Layer inputLayer;
     private final Layer outputLayer;
+    private final double learningRate;
 
-    protected NeuralNetwork(int input, List<Integer> hiddenLayers, int output) {
-        this.inputLayer = new Layer(0,input);
+    protected NeuralNetwork(int input, List<Integer> hiddenLayers, int output, double learningRate) {
+        this.inputLayer = new Layer(this,0,input);
         int count = 1;
+        this.learningRate = learningRate;
         Layer root = inputLayer;
         for(int neurons : hiddenLayers) {
-            Layer next = new Layer(count,neurons);
+            Layer next = new Layer(this,count,neurons);
             root.setNextLayer(next);
             next.setPreviousLayer(root);
             root = next;
             count++;
         }
 
-        outputLayer = new Layer(count,output);
+        outputLayer = new Layer(this,count,output);
         outputLayer.setPreviousLayer(root);
         root.setNextLayer(outputLayer);
     }
 
     public double[] calculate(double... values) {
         inputLayer.setValues(values);
-        Layer root = inputLayer.getNextLayer();
-        while (root!=null) {
-            root.calculate();
-            root = root.getNextLayer();
-        }
+        inputLayer.feedForward();
 
         return outputLayer.getValues();
     }
 
-    public void train(double[] values, double[] expected) {
-        double[] actual = calculate(values);
-        double cost = getCost(actual,expected);
+    public void train(double[] expected) {
+        //test the neural network
+        inputLayer.feedForward();
+
+        //calculate the error
+        Matrix T = Matrix.fromArray(expected,false);
+        Matrix R = outputLayer.getActivations();
+        Matrix error = T.subtract(R);
+        outputLayer.setError(error);
+
+        outputLayer.propagateBackwards();
     }
 
-    private double getCost(double[] actual, double[] expected) {
-        double cost = 0;
-        for(int i=0;i<actual.length;i++) {
-            double c = actual[i] - expected[i];
-            cost += (c * c);
-        }
-
-        return cost;
+    public double getLearningRate() {
+        return learningRate;
     }
 
     public static class Builder {
-        private List<Integer> hiddenLayers;
-        private int input;
-        private int output;
+        private final List<Integer> hiddenLayers;
+        private final int input;
+        private final int output;
+        private double learningRate = 0.5d;
 
         public Builder(int input, int output) {
             this.input = input;
@@ -67,8 +68,13 @@ public class NeuralNetwork {
             return this;
         }
 
+        public Builder setLearningRate(double learningRate) {
+            this.learningRate = learningRate;
+            return this;
+        }
+
         public NeuralNetwork build() {
-            return new NeuralNetwork(input,hiddenLayers,output);
+            return new NeuralNetwork(input,hiddenLayers,output,learningRate);
         }
     }
 
