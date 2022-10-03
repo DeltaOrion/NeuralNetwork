@@ -1,4 +1,4 @@
-package me.jacob.assign;
+package me.jacob.assign.perceptron;
 
 public class TrainingSet {
 

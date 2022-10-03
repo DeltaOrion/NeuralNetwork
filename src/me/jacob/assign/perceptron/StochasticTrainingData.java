@@ -1,4 +1,4 @@
-package me.jacob.assign;
+package me.jacob.assign.perceptron;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +25,8 @@ public class StochasticTrainingData extends TrainingData {
 
         int count = 0;
         for(int i=0;i<repetitions;i++) {
+            //if(i%10==0)
+            //    System.out.println("Repetitions:" + i);
             Collections.shuffle(trainingData);
             for(TrainingSet set : trainingData) {
                 neuralNetwork.train(set.getInputs(), set.getExpected());
@@ -35,19 +37,5 @@ public class StochasticTrainingData extends TrainingData {
                 }
             }
         }
-
-        /*
-            for (int i = 0; i < batchSize; i++) {
-                TrainingSet set = getTrainingData().get(count);
-                neuralNetwork.train(set.getInputs(),set.getExpected());
-                count++;
-                if (count >= trainingData.size()) {
-                    terminate = true;
-                    break;
-                }
-            }
-            neuralNetwork.applyTraining();
-
-         */
     }
 }

@@ -1,4 +1,6 @@
-package me.jacob.assign;
+package me.jacob.assign.perceptron;
+
+import me.jacob.assign.math.Matrix;
 
 import java.util.ArrayList;
 import java.util.List;

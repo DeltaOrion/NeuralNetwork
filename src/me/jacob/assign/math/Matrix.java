@@ -1,9 +1,11 @@
-package me.jacob.assign;
+package me.jacob.assign.math;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Function;
 
+/**
+ */
 public class Matrix {
 
     private final double[][] values;

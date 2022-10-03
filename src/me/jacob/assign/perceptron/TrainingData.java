@@ -1,4 +1,4 @@
-package me.jacob.assign;
+package me.jacob.assign.perceptron;
 
 import java.util.ArrayList;
 import java.util.List;
