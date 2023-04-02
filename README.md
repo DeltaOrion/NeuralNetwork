@@ -2,7 +2,9 @@
 
 The following program is a basic forward feeding multiplayer perceptron. A perceptron is divided up into an input layer, hidden layers and output layer. The neural network can either feedforward, which allows it to return an output with the given inputs, which is approximated with its current weights and biases or back propogate which takes an input, expected output and improves its approximator function. 
 
-The neural network only supports a sigmoid activation function and a meaned square error function. 
+![Image of a multilayer perceptron](multi-layer-perceptron-in-tensorflow.png)
+
+The neural network only supports a sigmoid activation function and a meaned square error function. This program was made without the help of any external libraries. 
 
 ## Building 
 
