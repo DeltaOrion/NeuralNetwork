@@ -18,7 +18,13 @@ import java.util.Scanner;
 public class ColorSelector {
 
     public static void main(String[] args) throws FileNotFoundException {
-        String path = "C:\\Users\\User\\Documents\\NeuralNetwork\\ColorTrainingData.txt";
+        String path = null;
+        if(args.length == 0) {
+            path = "ColorTrainingData.txt";
+        } else {
+            path = args[0];
+        }
+
         Reader reader = new FileReader(path);
         ColorTrainingReader colorReader = new ColorTrainingReader(reader);
         ColorLabeller labeller = new ColorLabeller();
